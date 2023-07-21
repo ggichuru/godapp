@@ -2,6 +2,7 @@ package transactions
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math/big"
 
@@ -10,20 +11,20 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func GetCurrentBlock(client ethclient.Client, ctx context.Context) string {
+func getCurrentBlock(client ethclient.Client, ctx context.Context) int64 {
 	// call header by number  by passing nill as the number
 	header, err := client.HeaderByNumber(ctx, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return header.Number.String()
+	return header.Number.Int64()
 
 }
 
-func GetBlock(client ethclient.Client, ctx context.Context, blocknumber int) *types.Block {
+func getBlock(client ethclient.Client, ctx context.Context, block_number int) *types.Block {
 	// call client.BlockByNumber
-	block, err := client.BlockByNumber(ctx, big.NewInt(int64(blocknumber)))
+	block, err := client.BlockByNumber(ctx, big.NewInt(int64(block_number)))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,4 +39,13 @@ func TxCount(client ethclient.Client, ctx context.Context, block_hash common.Has
 	}
 
 	return count
+}
+
+func SimulateBlock(client ethclient.Client, ctx context.Context) *types.Block {
+	latest_block := getCurrentBlock(client, ctx)
+	fmt.Println("Latest Block:", latest_block)
+
+	block := getBlock(client, ctx, int(latest_block))
+
+	return block
 }

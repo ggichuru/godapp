@@ -49,7 +49,7 @@ func main() {
 	fmt.Println()
 
 	// Block Query
-	latest_block := transactions.GetCurrentBlock(client, ctx)
-	fmt.Println("Latest Block:", latest_block)
+	block := transactions.SimulateBlock(client, ctx)
+	fmt.Println("Block Hash: ", block.Hash())
 
 }
