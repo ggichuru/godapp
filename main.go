@@ -7,6 +7,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ggichuru/godapp/configs"
+	"github.com/ggichuru/godapp/transactions"
 	"github.com/ggichuru/godapp/wallet"
 )
 
@@ -15,6 +16,7 @@ import (
 
 func main() {
 	configs.LoadEnv()
+	ctx := context.Background()
 
 	/** GLOBALS*/
 	client := configs.ConnectEthClient()
@@ -38,9 +40,16 @@ func main() {
 		fmt.Println("address is evm")
 	}
 
-	if isContract := wallet.IsContract(client, context.Background(), acc_addr); isContract {
+	if isContract := wallet.IsContract(client, ctx, acc_addr); isContract {
 		fmt.Println("address is Contract")
 	} else {
 		fmt.Println("address is EOA")
 	}
+
+	fmt.Println()
+
+	// Block Query
+	latest_block := transactions.GetCurrentBlock(client, ctx)
+	fmt.Println("Latest Block:", latest_block)
+
 }
