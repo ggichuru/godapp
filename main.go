@@ -3,9 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/ggichuru/godapp/configs"
 	"github.com/ggichuru/godapp/transactions"
 	"github.com/ggichuru/godapp/wallet"
@@ -22,7 +20,7 @@ func main() {
 	client := configs.ConnectEthClient()
 
 	// convert acc_addr to common.Address
-	acc_addr := common.HexToAddress(os.Getenv("PUBLIC_KEY"))
+	acc_addr := configs.ExtractPublicKey()
 
 	/** FN CALLS*/
 	// balances
@@ -55,5 +53,11 @@ func main() {
 	fmt.Println()
 
 	// tx query
-	transactions.GetTransactions(block, client, ctx)
+	// transactions.GetTransactions(block, client, ctx)
+
+	fmt.Println()
+
+	// Transfer eth
+	transactions.SetupTransfer(client, ctx)
+
 }
