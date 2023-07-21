@@ -26,4 +26,8 @@ func main() {
 
 	// Wallet
 	wallet.PreviewWallet(acc_addr, client)
+
+	// Keystore
+	// wallet.CreateKeystore()
+	wallet.ImportKeystore()
 }
