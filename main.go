@@ -52,4 +52,8 @@ func main() {
 	block := transactions.SimulateBlock(client, ctx)
 	fmt.Println("Block Hash: ", block.Hash())
 
+	fmt.Println()
+
+	// tx query
+	transactions.GetTransactions(block, client, ctx)
 }
