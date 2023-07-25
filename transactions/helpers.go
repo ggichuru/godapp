@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"log"
+	"math/big"
 	"os"
 
 	"github.com/ethereum/go-ethereum"
@@ -11,6 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/shopspring/decimal"
 )
 
 type gasOpts struct {
@@ -82,4 +84,29 @@ func SignTransaction(client ethclient.Client, ctx context.Context, tx *types.Tra
 	}
 
 	return signed_tx
+}
+
+// ToWei decimals to wei
+func ToWei(iamount interface{}, amnt float64, decimals int) *big.Int {
+	amount := decimal.NewFromFloat(amnt)
+	switch v := iamount.(type) {
+	case string:
+		amount, _ = decimal.NewFromString(v)
+	case float64:
+		amount = decimal.NewFromFloat(v)
+	case int64:
+		amount = decimal.NewFromFloat(float64(v))
+	case decimal.Decimal:
+		amount = v
+	case *decimal.Decimal:
+		amount = *v
+	}
+
+	mul := decimal.NewFromFloat(float64(10)).Pow(decimal.NewFromFloat(float64(decimals)))
+	result := amount.Mul(mul)
+
+	wei := new(big.Int)
+	wei.SetString(result.String(), 10)
+
+	return wei
 }

@@ -63,7 +63,7 @@ func main() {
 
 	// Transfer ERC20
 	to_address := common.HexToAddress("0x3F92A2952746be63f8E22D58997A9A56c95ed2D1")
-	from_address := common.HexToAddress("0x333E676b55d0181637c8456EbC47Bd094A247599")
-	transactions.TransferErc20(client, ctx, from_address, to_address, 20)
+	transactions.TransferErc20(client, ctx, acc_addr, to_address, 20)
 
+	// fmt.Println(transactions.ToWei(0, 20, 18))
 }

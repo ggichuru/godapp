@@ -3,7 +3,6 @@ package transactions
 import (
 	"context"
 	"fmt"
-	"math"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -28,7 +27,8 @@ func TransferErc20(client ethclient.Client, ctx context.Context, from_address co
 	padded_addr := common.LeftPadBytes(to_address.Bytes(), 32)
 
 	// set the value tokens to send as *big.Int
-	amnt_wei := fmt.Sprint(amount * int(math.Pow10(18)))
+	amnt_wei := fmt.Sprint(ToWei(nil, float64(amount), 18))
+	fmt.Println(amnt_wei)
 	_amount := new(big.Int)
 	_amount.SetString(amnt_wei, 10)
 
@@ -42,7 +42,8 @@ func TransferErc20(client ethclient.Client, ctx context.Context, from_address co
 	data = append(data, padded_amnt...)
 
 	// compute gas limit
-	gas_limit := EstimateGas(client, ctx, gasOpts{Data: data, To: token})
+	// gas_limit := EstimateGas(client, ctx, gasOpts{Data: data, To: token})
+	gas_limit := uint64(200000)
 
 	// compute gas price
 	gas_price := big.NewInt(int64(EstimateGas(client, ctx)))
@@ -51,12 +52,24 @@ func TransferErc20(client ethclient.Client, ctx context.Context, from_address co
 	nonce := SetNonce(client, ctx, from_address)
 
 	// create transaction
-	tx := types.NewTransaction(nonce, token, big.NewInt(0), gas_limit, gas_price, data) //TODO: Switch to newTx
+	// tx := types.NewTransaction(nonce, token, big.NewInt(0), gas_limit, gas_price, data)
+
+	tx := types.NewTx(&types.LegacyTx{
+		Nonce:    nonce,
+		GasPrice: gas_price,
+		Gas:      gas_limit,
+		To:       &token,
+		Value:    nil,
+		Data:     data,
+		V:        nil,
+		R:        nil,
+		S:        nil,
+	})
 
 	// get PK
 	private_key := LoadPrivateKey()
 
 	sign_tx := SignTransaction(client, ctx, tx, private_key)
 
-	fmt.Printf("Transfering %T WK1 Tokens to %T. \n Hash: %T ", amount, to_address, sign_tx.Hash().Hex())
+	fmt.Printf("Transfering %d WK1 Tokens to %v. \n Hash: %s ", amount, to_address, sign_tx.Hash().Hex())
 }
