@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ggichuru/godapp/configs"
 	"github.com/ggichuru/godapp/transactions"
 	"github.com/ggichuru/godapp/wallet"
@@ -20,7 +21,7 @@ func main() {
 	client := configs.ConnectEthClient()
 
 	// convert acc_addr to common.Address
-	acc_addr := configs.ExtractPublicKey()
+	acc_addr := transactions.ExtractPublicKey()
 
 	/** FN CALLS*/
 	// balances
@@ -58,6 +59,11 @@ func main() {
 	fmt.Println()
 
 	// Transfer eth
-	transactions.SetupTransfer(client, ctx)
+	// transactions.SetupTransfer(client, ctx)
+
+	// Transfer ERC20
+	to_address := common.HexToAddress("0x3F92A2952746be63f8E22D58997A9A56c95ed2D1")
+	from_address := common.HexToAddress("0x333E676b55d0181637c8456EbC47Bd094A247599")
+	transactions.TransferErc20(client, ctx, from_address, to_address, 20)
 
 }
